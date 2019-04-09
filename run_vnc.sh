@@ -74,8 +74,6 @@ else
     fi
 fi
 
-cp /xinitrc /home/${MY_USERNAME}/.xinitrc
-
 # Start VNC Server, trap sig and tail log
 trap '{ vncserver -kill :1; killall -9 tail; exit 0}' SIGTERM
 su -c vncserver - ${MY_USERNAME}
