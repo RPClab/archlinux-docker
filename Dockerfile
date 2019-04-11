@@ -1,12 +1,31 @@
-FROM chakralinux/chakra-bootstrap
+FROM archlinux/base:latest
+LABEL maintainer="lagarde@sjtu.edu.cn"
 
 COPY run_vnc.sh /run_vnc.sh
 
-RUN 	echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen && \
-	echo 'Server = https://mirrors.kernel.org/archlinux/$repo/os/$arch' > /etc/pacman.d/mirrorlist && \
-	pacman-key --init && \
+RUN 	pacman-key --init && \
 	pacman-key --populate archlinux && \
+	pacman -Sy --noconfirm archlinux-keyring && \
 	pacman -Syu --noconfirm && \
-	pacman -S tigervnc
-EXPOSE 5901
-ENTRYPOINT ["/run_vnc.sh"]
+	pacman -S --noconfirm base-devel \
+	git \
+	tigervnc \
+	plasma-meta \	
+	ttf-dejavu \
+	x11vnc \
+   	xorg-server \
+    	xorg-apps \
+    	xorg-server-xvfb \
+	xorg-xinit\
+# noVNC setup
+WORKDIR /usr/share/
+RUN git clone https://github.com/kanaka/noVNC.git
+#WORKDIR /usr/share/noVNC/utils/
+#RUN git clone https://github.com/kanaka/websockify
+
+RUN export DISPLAY=:0.0
+COPY supervisord.conf /etc/
+EXPOSE 8083
+RUN useradd -m user
+WORKDIR /home/user
+CMD ["/usr/bin/supervisord"]
