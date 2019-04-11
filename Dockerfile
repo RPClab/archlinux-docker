@@ -1,8 +1,6 @@
 FROM archlinux/base:latest
 LABEL maintainer="lagarde@sjtu.edu.cn"
 
-COPY run_vnc.sh /run_vnc.sh
-
 RUN 	pacman-key --init && \
 	pacman-key --populate archlinux && \
 	pacman -Sy --noconfirm archlinux-keyring && \
