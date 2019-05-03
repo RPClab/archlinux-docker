@@ -5,6 +5,7 @@ LABEL maintainer="lagarde@sjtu.edu.cn"
 #ENV NOVNC_VERSION 0.6.2
 #ENV SCREEN_DIMENSIONS 1024x768x16
 #ENV DESKTOP_USERNAME user
+ENV VNCPASSWORD password
 
 #INIT
 RUN 	pacman-key --init
@@ -14,7 +15,7 @@ RUN	pacman -S --noconfirm archlinux-keyring
 RUN	pacman -Syu --noconfirm 
 
 #INSTALL TIGERVNC
-#RUN	pacman -S --noconfirm tigervnc
+RUN	pacman -S --noconfirm tigervnc xfce4
 
 
 #base-devel
@@ -43,5 +44,7 @@ EXPOSE 5900 6080
 #chmod 0640 /home/${DESKTOP_USERNAME}/.vnc/passwd 
 
 
-#COPY supervisor_novnc.conf /etc/supervisor/conf.d/novnc.conf
-ENTRYPOINT["sh"]
+COPY ./startxfce.sh /usr/local/bin/startxfce.sh
+COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
