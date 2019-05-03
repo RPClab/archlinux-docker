@@ -4,7 +4,7 @@ LABEL maintainer="lagarde@sjtu.edu.cn"
 #ENV DEBIAN_FRONTEND noninteractive
 #ENV NOVNC_VERSION 0.6.2
 #ENV SCREEN_DIMENSIONS 1024x768x16
-#ENV DESKTOP_USERNAME user
+#ENV DESKTOP_USERNAME rpclab
 ENV VNCPASSWORD password
 
 #INIT
@@ -36,7 +36,8 @@ RUN	pacman -S --noconfirm tigervnc xfce4
 #RUN export DISPLAY=:0.0
 #ADD ./supervisord /etc/supervisord.conf
 EXPOSE 5900 6080
-#RUN useradd -m ${DESKTOP_USERNAME}
+RUN useradd -m ${DESKTOP_USERNAME}
+RUN echo "pass" | passwd --stdin ${DESKTOP_USERNAME}
 #WORKDIR /home/${DESKTOP_USERNAME}
 #RUN mkdir /home/${DESKTOP_USERNAME}/.vnc/ && \
 #x11vnc -storepasswd ${DESKTOP_USERNAME} /home/${DESKTOP_USERNAME}/.vnc/passwd && \
