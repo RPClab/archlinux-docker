@@ -37,7 +37,7 @@ RUN	pacman -S --noconfirm tigervnc xfce4
 #ADD ./supervisord /etc/supervisord.conf
 EXPOSE 5900 6080
 RUN useradd -m ${DESKTOP_USERNAME}
-RUN echo "pass" | passwd --stdin ${DESKTOP_USERNAME}
+RUN echo "${VNCPASSWORD}" | passwd --stdin ${DESKTOP_USERNAME}
 #WORKDIR /home/${DESKTOP_USERNAME}
 #RUN mkdir /home/${DESKTOP_USERNAME}/.vnc/ && \
 #x11vnc -storepasswd ${DESKTOP_USERNAME} /home/${DESKTOP_USERNAME}/.vnc/passwd && \
