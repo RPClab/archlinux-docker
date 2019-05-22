@@ -6,6 +6,10 @@ LABEL maintainer="lagarde@sjtu.edu.cn"
 #ENV SCREEN_DIMENSIONS 1024x768x16
 ENV DESKTOP_USERNAME rpclab
 ENV VNCPASSWORD password
+ENV ROOTPASSWORD root
+ENV TIMEZONE Asia/Shanghai
+
+RUN echo -e "${ROOTPASSWORD}\n${ROOTPASSWORD}" | passwd root
 
 #INIT
 RUN 	pacman-key --init
@@ -14,38 +18,39 @@ RUN	pacman -Sy --noconfirm
 RUN	pacman -S --noconfirm archlinux-keyring 
 RUN	pacman -Syu --noconfirm 
 
-#INSTALL TIGERVNC
-RUN	pacman -S --noconfirm tigervnc xfce4
-
-
 #base-devel
-#RUN	pacman -S --noconfirm base-devel
-# x11 etc 
-#RUN	pacman -S --noconfirm x11vnc xorg-server xorg-apps xorg-server-xvfb xorg-xinit 
-# others
-#RUN	pacman -S --noconfirm git tigervnc plasma-meta ttf-dejavu
-#RUN	pacman -S --noconfirm supervisor
-#RUN	pacman -S --noconfirm tigervnc
+RUN	pacman -S --noconfirm base-devel git cmake x11vnc xorg-server xorg-apps xorg-server-xvfb xorg-xinit root tigervnc xfce4 tzdata
+
+# timezone
+RUN ln -sf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime
 
 # noVNC setup
-#WORKDIR /usr/share/
-#RUN git clone https://github.com/kanaka/noVNC.git
-#WORKDIR /usr/share/noVNC/utils/
-#RUN git clone https://github.com/kanaka/websockify
+WORKDIR /usr/share/
+RUN git clone https://github.com/kanaka/noVNC.git
+WORKDIR /usr/share/noVNC/utils/
+RUN git clone https://github.com/kanaka/websockify
 
 #RUN export DISPLAY=:0.0
 #ADD ./supervisord /etc/supervisord.conf
 EXPOSE 5900 6080
 RUN useradd -m ${DESKTOP_USERNAME}
-RUN echo "${VNCPASSWORD}" | passwd --stdin ${DESKTOP_USERNAME}
-#WORKDIR /home/${DESKTOP_USERNAME}
-#RUN mkdir /home/${DESKTOP_USERNAME}/.vnc/ && \
-#x11vnc -storepasswd ${DESKTOP_USERNAME} /home/${DESKTOP_USERNAME}/.vnc/passwd && \
-#    chown -R ${DESKTOP_USERNAME}:${DESKTOP_USERNAME} /home/${DESKTOP_USERNAME}/.vnc && \
-#chmod 0640 /home/${DESKTOP_USERNAME}/.vnc/passwd 
-
+RUN echo -e "${VNCPASSWORD}\n${VNCPASSWORD}" | passwd ${DESKTOP_USERNAME}
 
 COPY ./startxfce.sh /usr/local/bin/startxfce.sh
+RUN chmod a+rwx /usr/local/bin/startxfce.sh
 COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod a+rwx /usr/local/bin/entrypoint.sh
+
+USER ${DESKTOP_USERNAME}
+WORKDIR /home/${DESKTOP_USERNAME}
+
+RUN mkdir -p /home/${DESKTOP_USERNAME}/.vnc/
+RUN echo "${VNCPASSWORD}" | vncpasswd -f > "/home/${DESKTOP_USERNAME}/.vnc/passwd"
+RUN chown -R ${DESKTOP_USERNAME}:${DESKTOP_USERNAME} /home/${DESKTOP_USERNAME}/.vnc
+RUN chmod 0640 /home/${DESKTOP_USERNAME}/.vnc/passwd 
+
+
+
+
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

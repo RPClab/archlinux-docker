@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 mkdir -p "/home/rpclab/.vnc"
 echo "${VNCPASSWORD}" | vncpasswd -f > "/home/rpclab/.vnc/passwd"
 chmod 600 "/home/rpclab/.vnc/passwd"
