@@ -19,7 +19,7 @@ RUN	pacman -S --noconfirm archlinux-keyring
 RUN	pacman -Syu --noconfirm 
 
 #base-devel
-RUN	pacman -S --noconfirm base-devel git cmake x11vnc xorg-server xorg-apps xorg-server-xvfb xorg-xinit root tigervnc xfce4 tzdata
+RUN	pacman -S --noconfirm base-devel git cmake x11vnc xorg-server xorg-apps xorg-server-xvfb xorg-xinit root tigervnc xfce4 tzdata mariadb
 
 # timezone
 RUN ln -sf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime
