@@ -34,8 +34,7 @@ RUN git clone https://github.com/kanaka/websockify
 #ADD ./supervisord /etc/supervisord.conf
 
 # DIM_DNS_PORT
-EXPOSE 2505
-EXPOSE 5100-6000
+EXPOSE 5901
 RUN useradd -m ${DESKTOP_USERNAME}
 RUN echo -e "${VNCPASSWORD}\n${VNCPASSWORD}" | passwd ${DESKTOP_USERNAME}
 
